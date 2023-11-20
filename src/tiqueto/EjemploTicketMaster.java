@@ -21,6 +21,7 @@ public class EjemploTicketMaster {
 
     // El número total de fans
     public static int NUM_FANS = 5;
+    public static List<FanGrupo> fans;
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -28,7 +29,7 @@ public class EjemploTicketMaster {
         System.out.println(String.format(mensajeInicial, NUM_FANS, TOTAL_ENTRADAS));
         WebCompraConciertos webCompra = new WebCompraConciertos();
         PromotoraConciertos liveNacion = new PromotoraConciertos(webCompra);
-        List<FanGrupo> fans = new ArrayList<>();
+        fans = new ArrayList<>();
 
         // Creamos todos los fans
         for (int numFan = 1; numFan <= NUM_FANS; numFan++) {
@@ -54,6 +55,19 @@ public class EjemploTicketMaster {
             total += fan.cuantasEntradas();
         }
         System.out.println("En total se han vendido:" + total);
+
+        //Código cortesía de BARD para comprobar que no quedan hilos en ejecución
+        ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
+        int activeCount = threadGroup.activeCount();
+        // Comprueba si hay algún hilo ejecutandose
+        if (activeCount > 0) {
+            // Hay algún hilo ejecutandose
+            Thread thread = Thread.currentThread();
+            System.out.println("El hilo que está ejecutandose es: " + thread.getName() + " que pertenece al grupo de hilos " + threadGroup.getName());
+        } else {
+            // No hay ningún hilo ejecutandose
+        }
+        System.exit(0);
     }
 
     public static int aleatorio(int min, int max) {

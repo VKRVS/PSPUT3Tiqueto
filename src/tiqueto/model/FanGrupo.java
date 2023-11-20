@@ -19,19 +19,20 @@ public class FanGrupo extends Thread {
     public void run() {
         //TODO
 
-        while (this.entradasCompradas <= EjemploTicketMaster.MAX_ENTRADAS_POR_FAN) {
+        while (this.entradasCompradas < EjemploTicketMaster.MAX_ENTRADAS_POR_FAN) {
             if (webCompra.hayEntradas()) {
+                mensajeFan("Me dispongo a comprar entradas");
                 webCompra.comprarEntrada();
                 this.entradasCompradas++;
-                System.out.println("Soy el fan " + this.numeroFan + ", tengo ya: " + this.entradasCompradas);
+                mensajeFan("Soy el fan " + this.numeroFan + ", tengo en total: " + this.entradasCompradas);
+
                 try {
                     Thread.sleep(EjemploTicketMaster.aleatorio(1000, 3000));
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    System.out.println("El hilo fue interrumpido mientras dormía");
                 }
             }
         }
-
     }
 
     public void dimeEntradasCompradas() {

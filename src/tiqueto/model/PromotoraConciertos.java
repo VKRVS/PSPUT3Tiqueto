@@ -16,6 +16,7 @@ public class PromotoraConciertos extends Thread {
 
         while ((EjemploTicketMaster.recuento_entradas_restantes > 0) || (webCompra.hayEntradas())) {
             if (!webCompra.hayEntradas()) {
+                mensajePromotor("Toca reponer entradas. Quedan " + EjemploTicketMaster.recuento_entradas_restantes);
                 webCompra.reponerEntradas(EjemploTicketMaster.REPOSICION_ENTRADAS);
                 try {
                     Thread.sleep(EjemploTicketMaster.aleatorio(3000, 8000));
@@ -24,8 +25,13 @@ public class PromotoraConciertos extends Thread {
                 }
             }
         }
-        webCompra.cerrarVenta();
-
+        mensajePromotor("Ya no quedan entradas");
+        try {
+            webCompra.cerrarVenta();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        this.interrupt();
     }
 
     /**

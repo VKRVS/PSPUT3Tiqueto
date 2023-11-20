@@ -1,8 +1,9 @@
 package tiqueto.model;
 
-import org.w3c.dom.ls.LSOutput;
 import tiqueto.EjemploTicketMaster;
 import tiqueto.IOperacionesWeb;
+
+import static tiqueto.EjemploTicketMaster.fans;
 
 public class WebCompraConciertos implements IOperacionesWeb {
 
@@ -15,7 +16,9 @@ public class WebCompraConciertos implements IOperacionesWeb {
     @Override
     public synchronized boolean comprarEntrada() {
         if (hayEntradas()) {
-            this.entradasDisponibles--;
+            entradasDisponibles--;
+        } else {
+            mensajeWeb("No quedan entradas en esta remesa");
         }
         return hayEntradas();
     }
@@ -23,16 +26,15 @@ public class WebCompraConciertos implements IOperacionesWeb {
 
     @Override
     public synchronized int reponerEntradas(int numeroEntradas) {
-        System.out.println("Toca reponer entradas. Quedan " + EjemploTicketMaster.recuento_entradas_restantes);
         if (numeroEntradas > EjemploTicketMaster.recuento_entradas_restantes) {
-            for (int i = 0; i < EjemploTicketMaster.recuento_entradas_restantes; i++) {
+            for (int i = 0; i <= EjemploTicketMaster.recuento_entradas_restantes; i++) {
                 EjemploTicketMaster.recuento_entradas_restantes--;
-                this.entradasDisponibles++;
+                entradasDisponibles++;
             }
         } else {
             for (int i = 0; i < numeroEntradas; i++) {
                 EjemploTicketMaster.recuento_entradas_restantes--;
-                this.entradasDisponibles++;
+                entradasDisponibles++;
             }
         }
         return this.entradasDisponibles;
@@ -40,13 +42,19 @@ public class WebCompraConciertos implements IOperacionesWeb {
 
 
     @Override
-    public synchronized void cerrarVenta() {
-        Thread.currentThread().interrupt();
+    public synchronized void cerrarVenta() throws InterruptedException {
+        for (FanGrupo fan : fans) {
+            mensajeWeb(fan.numeroFan + " ha abandonado la web");
+            fan.interrupt();
+        }
     }
 
 
     @Override
     public synchronized boolean hayEntradas() {
+        if (this.entradasDisponibles > 0) {
+            mensajeWeb("Hay entradas. Aún quedan: " + entradasRestantes());
+        }
         return this.entradasDisponibles > 0;
     }
 
